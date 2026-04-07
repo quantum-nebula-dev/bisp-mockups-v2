@@ -1,0 +1,1906 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BISP — Bilingual International School of Paris</title>
+<link rel="icon" href="../assets/logos/favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ========== RESET & BASE ========== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  /* Haut-Lac palette */
+  --teal: #348397;
+  --teal-dark: #2a6a7a;
+  --teal-light: rgba(52, 131, 151, 0.12);
+  --red: #ed3122;
+  --red-dark: #c72a1d;
+  --green: #429e7b;
+  --green-light: rgba(66, 158, 123, 0.10);
+  --orange: #d89137;
+  --orange-light: rgba(216, 145, 55, 0.10);
+  --grey-text: #595959;
+  --grey-dark: #333333;
+  --white: #ffffff;
+  --off-white: #f7f9fa;
+  --cream: #faf8f5;
+  /* Typography */
+  --font-heading: 'Montserrat', sans-serif;
+  --font-body: 'Be Vietnam Pro', sans-serif;
+  /* Borders */
+  --border-thick: 5px;
+  --border-medium: 2px;
+  /* Diagonal angle */
+  --diagonal: 3.5deg;
+}
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--grey-text);
+  background: var(--white);
+  line-height: 1.65;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; height: auto; display: block; }
+button { cursor: pointer; font-family: inherit; border: none; }
+
+/* Skip to content */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  background: var(--teal);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 0 0 5px 5px;
+  z-index: 10000;
+  font-weight: 600;
+  font-family: var(--font-heading);
+  transition: top 0.3s;
+}
+.skip-link:focus { top: 0; }
+
+/* ========== UTILITIES ========== */
+.container {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--grey-dark);
+  line-height: 1.1;
+}
+
+/* Section reveal animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.15s; }
+.reveal-delay-2 { transition-delay: 0.3s; }
+.reveal-delay-3 { transition-delay: 0.45s; }
+.reveal-delay-4 { transition-delay: 0.6s; }
+
+/* B&W to color on hover */
+.bw-to-color {
+  filter: grayscale(100%);
+  transition: filter 0.6s ease, transform 0.6s ease;
+}
+.bw-to-color:hover {
+  filter: grayscale(0%);
+  transform: scale(1.03);
+}
+
+/* Accent border left */
+.accent-border-teal { border-left: var(--border-thick) solid var(--teal); }
+.accent-border-red { border-left: var(--border-thick) solid var(--red); }
+.accent-border-green { border-left: var(--border-thick) solid var(--green); }
+.accent-border-orange { border-left: var(--border-thick) solid var(--orange); }
+
+/* Dotted pattern background */
+.dot-pattern {
+  background-image: radial-gradient(var(--teal) 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+  opacity: 0.08;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ========== NAV ========== */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(52,131,151,0.12);
+  transition: box-shadow 0.3s, background 0.3s;
+}
+.nav.scrolled {
+  box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+.nav-logo img {
+  height: 48px;
+  width: auto;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--grey-dark);
+  position: relative;
+  transition: color 0.3s;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background: var(--teal);
+  transition: width 0.3s;
+}
+.nav-links a:hover { color: var(--teal); }
+.nav-links a:hover::after { width: 100%; }
+
+.nav-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--red);
+  color: var(--white) !important;
+  padding: 12px 28px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  border-radius: 3px;
+  transition: background 0.3s, transform 0.2s;
+  letter-spacing: 0.02em;
+}
+.nav-cta::after { display: none !important; }
+.nav-cta:hover {
+  background: var(--red-dark) !important;
+  color: var(--white) !important;
+  transform: translateY(-1px);
+}
+
+.nav-cta-secondary {
+  background: var(--teal);
+}
+.nav-cta-secondary:hover {
+  background: var(--teal-dark) !important;
+}
+
+/* Mobile menu button */
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  width: 40px;
+  height: 40px;
+  position: relative;
+  min-height: 48px;
+  min-width: 48px;
+  align-items: center;
+  justify-content: center;
+}
+.mobile-menu-btn span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--grey-dark);
+  transition: all 0.3s;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.mobile-menu-btn span:nth-child(1) { top: 16px; }
+.mobile-menu-btn span:nth-child(2) { top: 23px; }
+.mobile-menu-btn span:nth-child(3) { top: 30px; }
+.mobile-menu-btn.open span:nth-child(1) { top: 23px; transform: translateX(-50%) rotate(45deg); }
+.mobile-menu-btn.open span:nth-child(2) { opacity: 0; }
+.mobile-menu-btn.open span:nth-child(3) { top: 23px; transform: translateX(-50%) rotate(-45deg); }
+
+/* ========== HERO ========== */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background: var(--teal);
+  overflow: hidden;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 80px), 0 100%);
+  padding-top: 80px;
+}
+.hero-bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%) brightness(0.45);
+  z-index: 1;
+}
+.hero-dot-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.12) 1px, transparent 1px);
+  background-size: 24px 24px;
+  z-index: 2;
+  pointer-events: none;
+}
+.hero-content {
+  position: relative;
+  z-index: 3;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 80px 40px 140px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.hero-text { color: var(--white); }
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+  padding: 8px 20px;
+  border-radius: 3px;
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.hero-tag-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--red);
+  border-radius: 50%;
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.hero h1 {
+  font-size: clamp(2.8rem, 5vw, 4.2rem);
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1.05;
+  margin-bottom: 12px;
+}
+.hero-rotating-wrapper {
+  display: block;
+  height: 1.15em;
+  overflow: hidden;
+  position: relative;
+}
+.hero-rotating-word {
+  display: block;
+  position: absolute;
+  width: 100%;
+  animation: rotateWords 9s infinite;
+  opacity: 0;
+  transform: translateY(100%);
+  color: var(--orange);
+}
+.hero-rotating-word:nth-child(1) { animation-delay: 0s; }
+.hero-rotating-word:nth-child(2) { animation-delay: 3s; }
+.hero-rotating-word:nth-child(3) { animation-delay: 6s; }
+
+@keyframes rotateWords {
+  0% { opacity: 0; transform: translateY(100%); }
+  3% { opacity: 1; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(0); }
+  33% { opacity: 0; transform: translateY(-100%); }
+  100% { opacity: 0; transform: translateY(-100%); }
+}
+
+.hero-sub {
+  font-size: 1.15rem;
+  font-weight: 300;
+  line-height: 1.7;
+  margin: 28px 0 40px;
+  opacity: 0.9;
+  max-width: 520px;
+}
+.hero-ctas {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.btn-hero-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--red);
+  color: var(--white);
+  padding: 16px 36px;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 3px;
+  transition: background 0.3s, transform 0.2s;
+  min-height: 48px;
+}
+.btn-hero-primary:hover { background: var(--red-dark); transform: translateY(-2px); }
+.btn-hero-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  color: var(--white);
+  padding: 16px 36px;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 3px;
+  border: 2px solid rgba(255,255,255,0.5);
+  transition: all 0.3s;
+  min-height: 48px;
+}
+.btn-hero-secondary:hover {
+  border-color: var(--white);
+  background: rgba(255,255,255,0.1);
+}
+
+/* Hero image mosaic */
+.hero-mosaic {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  max-height: 480px;
+}
+.hero-mosaic-img {
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+}
+.hero-mosaic-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%) contrast(1.1);
+  transition: filter 0.6s ease;
+}
+.hero-mosaic-img:hover img {
+  filter: grayscale(0%);
+}
+.hero-mosaic-img:first-child {
+  grid-row: 1 / 3;
+  border: var(--border-thick) solid var(--orange);
+}
+.hero-mosaic-img:nth-child(2) {
+  border: var(--border-thick) solid var(--red);
+}
+.hero-mosaic-img:nth-child(3) {
+  border: var(--border-thick) solid var(--green);
+}
+
+/* Hero stats bar */
+.hero-stats {
+  position: absolute;
+  bottom: 100px;
+  left: 0;
+  right: 0;
+  z-index: 3;
+}
+.hero-stats-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  gap: 0;
+}
+.hero-stat {
+  flex: 1;
+  padding: 24px 32px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(8px);
+  border-right: 1px solid rgba(255,255,255,0.15);
+  text-align: center;
+  color: var(--white);
+}
+.hero-stat:first-child { border-radius: 5px 0 0 5px; }
+.hero-stat:last-child { border-right: none; border-radius: 0 5px 5px 0; }
+.hero-stat-number {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  font-weight: 800;
+  display: block;
+  line-height: 1;
+}
+.hero-stat-number .stat-accent-red { color: var(--red); }
+.hero-stat-number .stat-accent-green { color: var(--green); }
+.hero-stat-number .stat-accent-orange { color: var(--orange); }
+.hero-stat-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 6px;
+  opacity: 0.85;
+  letter-spacing: 0.02em;
+}
+
+/* ========== SECTION : PROMESSE ========== */
+.section-promesse {
+  position: relative;
+  padding: 120px 0 100px;
+  background: var(--white);
+  margin-top: -40px;
+}
+.promesse-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 80px;
+  align-items: center;
+}
+.promesse-label {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 20px;
+  position: relative;
+  padding-left: 32px;
+}
+.promesse-label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 3px;
+  background: var(--teal);
+}
+.promesse-text h2 {
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 700;
+  margin-bottom: 24px;
+  line-height: 1.12;
+}
+.promesse-text h2 .highlight-teal { color: var(--teal); }
+.promesse-text h2 .highlight-red { color: var(--red); }
+.promesse-text p {
+  font-size: 1.1rem;
+  line-height: 1.75;
+  color: var(--grey-text);
+  margin-bottom: 32px;
+  max-width: 520px;
+}
+.promesse-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.promesse-feature {
+  padding: 20px 24px;
+  background: var(--off-white);
+  border-radius: 5px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.promesse-feature:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(52,131,151,0.1);
+}
+.promesse-feature::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--border-thick);
+  height: 100%;
+}
+.promesse-feature:nth-child(1)::before { background: var(--teal); }
+.promesse-feature:nth-child(2)::before { background: var(--red); }
+.promesse-feature:nth-child(3)::before { background: var(--green); }
+.promesse-feature:nth-child(4)::before { background: var(--orange); }
+.promesse-feature-title {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--grey-dark);
+  margin-bottom: 6px;
+}
+.promesse-feature-desc {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--grey-text);
+}
+
+/* Promesse image stack */
+.promesse-visual {
+  position: relative;
+  height: 520px;
+}
+.promesse-img-main {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 72%;
+  height: 78%;
+  border-radius: 5px;
+  overflow: hidden;
+  border: var(--border-thick) solid var(--teal);
+  z-index: 2;
+}
+.promesse-img-main img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.promesse-img-accent {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 55%;
+  height: 55%;
+  border-radius: 5px;
+  overflow: hidden;
+  border: var(--border-thick) solid var(--orange);
+  z-index: 3;
+}
+.promesse-img-accent img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.promesse-dot-bg {
+  position: absolute;
+  top: 10%;
+  right: 5%;
+  width: 200px;
+  height: 200px;
+  background-image: radial-gradient(var(--teal) 1.5px, transparent 1.5px);
+  background-size: 16px 16px;
+  opacity: 0.12;
+  z-index: 1;
+}
+
+/* ========== DIAGONAL DIVIDER TEAL ========== */
+.diagonal-teal {
+  position: relative;
+  background: var(--teal);
+  padding: 120px 0 140px;
+  clip-path: polygon(0 40px, 100% 0, 100% calc(100% - 40px), 0 100%);
+  margin-top: -20px;
+}
+
+/* ========== SECTION : PILIERS ========== */
+.section-piliers {
+  color: var(--white);
+}
+.piliers-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+.piliers-header h2 {
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 700;
+  color: var(--white);
+}
+.piliers-header p {
+  font-size: 1.1rem;
+  margin-top: 16px;
+  opacity: 0.85;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.piliers-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+.pilier-card {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(8px);
+  border-radius: 5px;
+  padding: 36px 28px;
+  border: 1px solid rgba(255,255,255,0.12);
+  transition: transform 0.3s, background 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.pilier-card:hover {
+  transform: translateY(-6px);
+  background: rgba(255,255,255,0.14);
+}
+.pilier-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--border-thick);
+}
+.pilier-card:nth-child(1)::before { background: var(--red); }
+.pilier-card:nth-child(2)::before { background: var(--orange); }
+.pilier-card:nth-child(3)::before { background: var(--green); }
+.pilier-card:nth-child(4)::before { background: var(--white); }
+.pilier-number {
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+.pilier-card:nth-child(1) .pilier-number { color: var(--red); }
+.pilier-card:nth-child(2) .pilier-number { color: var(--orange); }
+.pilier-card:nth-child(3) .pilier-number { color: var(--green); }
+.pilier-card:nth-child(4) .pilier-number { color: var(--white); }
+.pilier-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--white);
+}
+.pilier-desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+/* ========== SECTION : GALERIE / CAMPUS LIFE ========== */
+.section-campus {
+  position: relative;
+  padding: 100px 0 120px;
+  background: var(--white);
+  margin-top: -20px;
+  overflow: hidden;
+}
+.campus-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 48px;
+}
+.campus-header h2 {
+  font-size: clamp(2rem, 3.5vw, 2.6rem);
+  font-weight: 700;
+}
+.campus-header h2 .highlight-green { color: var(--green); }
+.campus-header-link {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--teal);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: gap 0.3s;
+  min-height: 48px;
+}
+.campus-header-link:hover { gap: 14px; }
+.campus-header-link svg { width: 18px; height: 18px; }
+
+.campus-mosaic {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: 260px 260px;
+  gap: 16px;
+}
+.campus-mosaic-item {
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+}
+.campus-mosaic-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.campus-mosaic-item:nth-child(1) {
+  grid-row: 1 / 3;
+  border: var(--border-thick) solid var(--teal);
+}
+.campus-mosaic-item:nth-child(2) {
+  border: var(--border-thick) solid var(--red);
+}
+.campus-mosaic-item:nth-child(3) {
+  border: var(--border-thick) solid var(--green);
+}
+.campus-mosaic-item:nth-child(4) {
+  border: var(--border-thick) solid var(--orange);
+}
+.campus-mosaic-item:nth-child(5) {
+  border: var(--border-thick) solid var(--teal);
+}
+
+.campus-mosaic-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  color: var(--white);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.95rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.campus-mosaic-item:hover .campus-mosaic-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ========== DIAGONAL DIVIDER RED ========== */
+.diagonal-red {
+  position: relative;
+  background: var(--off-white);
+  clip-path: polygon(0 0, 100% 50px, 100% 100%, 0 calc(100% - 50px));
+  padding: 140px 0;
+  margin-top: -20px;
+}
+
+/* ========== SECTION : PARCOURS ========== */
+.section-parcours {
+  position: relative;
+}
+.parcours-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+.parcours-header h2 {
+  font-size: clamp(2rem, 3.5vw, 2.6rem);
+  font-weight: 700;
+}
+.parcours-header h2 .highlight-orange { color: var(--orange); }
+.parcours-header p {
+  font-size: 1.05rem;
+  margin-top: 14px;
+  color: var(--grey-text);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.parcours-timeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  position: relative;
+}
+.parcours-timeline::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  left: 12.5%;
+  right: 12.5%;
+  height: 4px;
+  background: linear-gradient(to right, var(--teal), var(--green), var(--orange), var(--red));
+  border-radius: 2px;
+}
+.parcours-item {
+  text-align: center;
+  padding: 0 16px;
+  position: relative;
+}
+.parcours-dot {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.75rem;
+  color: var(--white);
+  position: relative;
+  z-index: 2;
+  letter-spacing: 0.02em;
+}
+.parcours-item:nth-child(1) .parcours-dot { background: var(--teal); }
+.parcours-item:nth-child(2) .parcours-dot { background: var(--green); }
+.parcours-item:nth-child(3) .parcours-dot { background: var(--orange); }
+.parcours-item:nth-child(4) .parcours-dot { background: var(--red); }
+.parcours-title {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--grey-dark);
+  margin-bottom: 8px;
+}
+.parcours-ages {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.parcours-item:nth-child(1) .parcours-ages { color: var(--teal); }
+.parcours-item:nth-child(2) .parcours-ages { color: var(--green); }
+.parcours-item:nth-child(3) .parcours-ages { color: var(--orange); }
+.parcours-item:nth-child(4) .parcours-ages { color: var(--red); }
+.parcours-desc {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--grey-text);
+}
+
+/* ========== SECTION : TEMOIGNAGES ========== */
+.section-temoignages {
+  position: relative;
+  background: var(--teal);
+  padding: 120px 0 140px;
+  clip-path: polygon(0 50px, 100% 0, 100% calc(100% - 50px), 0 100%);
+  margin-top: -20px;
+  overflow: hidden;
+}
+.section-temoignages .dot-pattern {
+  background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+  opacity: 1;
+}
+.temoignages-header {
+  text-align: center;
+  margin-bottom: 56px;
+  position: relative;
+  z-index: 2;
+}
+.temoignages-header h2 {
+  font-size: clamp(2rem, 3.5vw, 2.6rem);
+  font-weight: 700;
+  color: var(--white);
+}
+.temoignages-header p {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.8);
+  margin-top: 14px;
+}
+.temoignages-slider {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  position: relative;
+  z-index: 2;
+}
+.temoignage-card {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 5px;
+  padding: 36px 28px;
+  transition: transform 0.3s, background 0.3s;
+  position: relative;
+}
+.temoignage-card:hover {
+  transform: translateY(-4px);
+  background: rgba(255,255,255,0.16);
+}
+.temoignage-card::before {
+  content: '\201C';
+  font-family: var(--font-heading);
+  font-size: 4rem;
+  font-weight: 800;
+  position: absolute;
+  top: 12px;
+  left: 24px;
+  line-height: 1;
+}
+.temoignage-card:nth-child(1)::before { color: var(--red); }
+.temoignage-card:nth-child(2)::before { color: var(--orange); }
+.temoignage-card:nth-child(3)::before { color: var(--green); }
+.temoignage-quote {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--white);
+  margin-top: 24px;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+.temoignage-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.temoignage-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.3);
+}
+.temoignage-name {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--white);
+}
+.temoignage-role {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.65);
+}
+
+/* ========== SECTION : PARIS ========== */
+.section-paris {
+  position: relative;
+  padding: 100px 0 120px;
+  background: var(--white);
+  margin-top: -20px;
+  overflow: hidden;
+}
+.paris-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.paris-visual {
+  position: relative;
+  border-radius: 5px;
+  overflow: hidden;
+  border: var(--border-thick) solid var(--green);
+}
+.paris-visual img {
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+}
+.paris-badge {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: var(--red);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 3px;
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.paris-label {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 20px;
+  position: relative;
+  padding-left: 32px;
+}
+.paris-label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 3px;
+  background: var(--green);
+}
+.paris-text h2 {
+  font-size: clamp(2rem, 3vw, 2.4rem);
+  font-weight: 700;
+  margin-bottom: 20px;
+  line-height: 1.15;
+}
+.paris-text h2 .highlight-green { color: var(--green); }
+.paris-text p {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  margin-bottom: 16px;
+}
+.paris-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+.paris-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 3px;
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 2px solid;
+  transition: transform 0.2s, background 0.3s;
+}
+.paris-tag:hover { transform: translateY(-2px); }
+.paris-tag:nth-child(1) { border-color: var(--teal); color: var(--teal); }
+.paris-tag:nth-child(1):hover { background: var(--teal-light); }
+.paris-tag:nth-child(2) { border-color: var(--red); color: var(--red); }
+.paris-tag:nth-child(2):hover { background: rgba(237,49,34,0.08); }
+.paris-tag:nth-child(3) { border-color: var(--orange); color: var(--orange); }
+.paris-tag:nth-child(3):hover { background: var(--orange-light); }
+.paris-tag:nth-child(4) { border-color: var(--green); color: var(--green); }
+.paris-tag:nth-child(4):hover { background: var(--green-light); }
+
+/* ========== SECTION : ACCREDITATIONS ========== */
+.section-accreditations {
+  background: var(--off-white);
+  clip-path: polygon(0 40px, 100% 0, 100% calc(100% - 40px), 0 100%);
+  padding: 110px 0;
+  margin-top: -20px;
+}
+.accred-inner {
+  display: flex;
+  align-items: center;
+  gap: 80px;
+}
+.accred-text {
+  flex: 1;
+}
+.accred-label {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 20px;
+  position: relative;
+  padding-left: 32px;
+}
+.accred-label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 3px;
+  background: var(--orange);
+}
+.accred-text h2 {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.accred-text h2 .highlight-orange { color: var(--orange); }
+.accred-text p {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 500px;
+}
+.accred-logos {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+}
+.accred-logo-item {
+  background: var(--white);
+  padding: 28px 36px;
+  border-radius: 5px;
+  border: 2px solid rgba(0,0,0,0.06);
+  transition: transform 0.3s, border-color 0.3s;
+}
+.accred-logo-item:hover {
+  transform: translateY(-4px);
+  border-color: var(--orange);
+}
+.accred-logo-item img {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* ========== SECTION : CTA FINAL ========== */
+.section-cta {
+  position: relative;
+  background: var(--grey-dark);
+  padding: 120px 0;
+  clip-path: polygon(0 50px, 100% 0, 100% 100%, 0 100%);
+  margin-top: -20px;
+  overflow: hidden;
+  text-align: center;
+}
+.section-cta .dot-pattern {
+  background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+  opacity: 1;
+}
+.cta-content {
+  position: relative;
+  z-index: 2;
+}
+.cta-content h2 {
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 20px;
+  line-height: 1.1;
+}
+.cta-content h2 .highlight-teal { color: var(--teal); }
+.cta-content p {
+  font-size: 1.15rem;
+  color: rgba(255,255,255,0.7);
+  max-width: 600px;
+  margin: 0 auto 40px;
+  line-height: 1.7;
+}
+.cta-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.btn-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--red);
+  color: var(--white);
+  padding: 18px 44px;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  border-radius: 3px;
+  transition: background 0.3s, transform 0.2s;
+  min-height: 48px;
+}
+.btn-cta-primary:hover { background: var(--red-dark); transform: translateY(-2px); }
+.btn-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  color: var(--white);
+  padding: 18px 44px;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-radius: 3px;
+  border: 2px solid var(--teal);
+  transition: all 0.3s;
+  min-height: 48px;
+}
+.btn-cta-secondary:hover {
+  background: var(--teal);
+  border-color: var(--teal);
+}
+.cta-phone {
+  display: block;
+  margin-top: 28px;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.5);
+}
+.cta-phone a {
+  color: rgba(255,255,255,0.7);
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+  transition: color 0.3s;
+}
+.cta-phone a:hover { color: var(--white); }
+
+/* ========== FOOTER ========== */
+.footer {
+  background: var(--teal-dark);
+  padding: 64px 0 32px;
+  color: var(--white);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+.footer-brand img {
+  height: 44px;
+  margin-bottom: 20px;
+  filter: brightness(0) invert(1);
+}
+.footer-brand p {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  opacity: 0.75;
+  max-width: 300px;
+}
+.footer-col h4 {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  color: var(--white);
+}
+.footer-col ul { list-style: none; }
+.footer-col li { margin-bottom: 10px; }
+.footer-col a {
+  font-size: 0.9rem;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+  display: inline-block;
+  min-height: 32px;
+  line-height: 32px;
+}
+.footer-col a:hover { opacity: 1; }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.15);
+  padding-top: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  opacity: 0.6;
+}
+.footer-bottom-links {
+  display: flex;
+  gap: 24px;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1024px) {
+  .hero-content { grid-template-columns: 1fr; }
+  .hero-mosaic { display: none; }
+  .promesse-grid { grid-template-columns: 1fr; }
+  .promesse-visual { height: 350px; }
+  .piliers-grid { grid-template-columns: repeat(2, 1fr); }
+  .campus-mosaic { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .campus-mosaic-item:nth-child(1) { grid-row: auto; }
+  .parcours-timeline { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+  .parcours-timeline::before { display: none; }
+  .temoignages-slider { grid-template-columns: 1fr; }
+  .paris-grid { grid-template-columns: 1fr; }
+  .accred-inner { flex-direction: column; text-align: center; }
+  .accred-label { padding-left: 0; }
+  .accred-label::before { display: none; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+  .container { padding: 0 20px; }
+  .nav-inner { padding: 0 20px; }
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 80px;
+    left: 0;
+    right: 0;
+    background: var(--white);
+    flex-direction: column;
+    padding: 24px 20px;
+    gap: 0;
+    border-top: 2px solid var(--teal);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+  }
+  .nav-links.open { display: flex; }
+  .nav-links li { width: 100%; }
+  .nav-links a {
+    display: block;
+    padding: 14px 0;
+    font-size: 1rem;
+    border-bottom: 1px solid var(--off-white);
+  }
+  .nav-links a::after { display: none; }
+  .nav-cta {
+    margin-top: 8px;
+    width: 100%;
+    justify-content: center;
+  }
+  .mobile-menu-btn { display: flex; }
+
+  .hero { min-height: auto; padding-bottom: 120px; }
+  .hero-content { padding: 60px 20px 80px; }
+  .hero h1 { font-size: 2.2rem; }
+  .hero-stats-inner { flex-direction: column; }
+  .hero-stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.15); }
+  .hero-stat:last-child { border-bottom: none; }
+
+  .piliers-grid { grid-template-columns: 1fr; }
+  .campus-mosaic { grid-template-columns: 1fr; grid-template-rows: auto; }
+  .parcours-timeline { grid-template-columns: 1fr; }
+  .promesse-features { grid-template-columns: 1fr; }
+  .promesse-visual { height: 280px; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+}
+
+@media (max-width: 375px) {
+  html { font-size: 14px; }
+  .hero h1 { font-size: 1.9rem; }
+  .hero-ctas { flex-direction: column; }
+  .btn-hero-primary, .btn-hero-secondary { width: 100%; justify-content: center; }
+  .cta-buttons { flex-direction: column; align-items: center; }
+  .btn-cta-primary, .btn-cta-secondary { width: 100%; justify-content: center; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  .hero-rotating-word { opacity: 1; transform: none; animation: none; }
+  .hero-rotating-word:not(:first-child) { display: none; }
+}
+
+/* Focus visible */
+*:focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 2px;
+}
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Aller au contenu principal</a>
+
+<!-- ========== NAVIGATION ========== -->
+<nav class="nav" role="navigation" aria-label="Navigation principale">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo" aria-label="BISP — Accueil">
+      <img src="../assets/logos/logo-bisp-header.svg" alt="BISP — Bilingual International School of Paris" width="160" height="48">
+    </a>
+    <ul class="nav-links" id="nav-menu" role="menubar">
+      <li role="none"><a href="#promesse" role="menuitem">Notre promesse</a></li>
+      <li role="none"><a href="#piliers" role="menuitem">Pourquoi BISP</a></li>
+      <li role="none"><a href="#campus" role="menuitem">La vie ici</a></li>
+      <li role="none"><a href="#parcours" role="menuitem">Parcours</a></li>
+      <li role="none"><a href="#temoignages" role="menuitem">Familles</a></li>
+      <li role="none"><a href="#contact" class="nav-cta nav-cta-secondary" role="menuitem">Visite privee</a></li>
+      <li role="none"><a href="#contact" class="nav-cta" role="menuitem">Inscription</a></li>
+    </ul>
+    <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ========== HERO ========== -->
+<header class="hero" id="main">
+  <video class="hero-bg-video" autoplay muted loop playsinline poster="../assets/images/hero-poster.jpg" aria-hidden="true">
+    <source src="../assets/videos/video-presentation-bisp.mp4" type="video/mp4">
+  </video>
+  <div class="hero-dot-overlay" aria-hidden="true"></div>
+
+  <div class="hero-content">
+    <div class="hero-text">
+      <div class="hero-tag">
+        <span class="hero-tag-dot" aria-hidden="true"></span>
+        Paris 15e — Maternelle au Lycee
+      </div>
+      <h1>
+        Deux langues,<br>
+        <span class="hero-rotating-wrapper" aria-live="polite">
+          <span class="hero-rotating-word">un monde entier.</span>
+          <span class="hero-rotating-word">une confiance infinie.</span>
+          <span class="hero-rotating-word">mille possibles.</span>
+        </span>
+      </h1>
+      <p class="hero-sub">
+        Dans des classes de 12 eleves, vos enfants construisent un double passeport academique — Cambridge et francais — et la confiance de grandir entre les cultures.
+      </p>
+      <div class="hero-ctas">
+        <a href="#contact" class="btn-hero-primary">
+          Demander une inscription
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#contact" class="btn-hero-secondary">
+          Planifier une visite
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-mosaic" aria-hidden="true">
+      <div class="hero-mosaic-img">
+        <img src="../assets/stock/diverse-students.jpg" alt="Eleves de differentes nationalites en classe" loading="eager">
+      </div>
+      <div class="hero-mosaic-img">
+        <img src="../assets/images/activites-enfants.png" alt="Activites creatives a BISP" loading="eager">
+      </div>
+      <div class="hero-mosaic-img">
+        <img src="../assets/stock/teacher-children.jpg" alt="Enseignante avec ses eleves" loading="eager">
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hero-stats-inner">
+      <div class="hero-stat">
+        <span class="hero-stat-number" data-target="32"><span class="stat-accent-red">32</span></span>
+        <span class="hero-stat-label">nationalites</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-number" data-target="12"><span class="stat-accent-green">12</span></span>
+        <span class="hero-stat-label">eleves par classe</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-number" data-target="50"><span class="stat-accent-orange">50</span>/50</span>
+        <span class="hero-stat-label">francais / anglais</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-number">3–18 <span style="font-size:0.6em;opacity:0.8">ans</span></span>
+        <span class="hero-stat-label">maternelle au lycee</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ========== PROMESSE ========== -->
+<section class="section-promesse" id="promesse">
+  <div class="container">
+    <div class="promesse-grid">
+      <div class="promesse-text reveal">
+        <span class="promesse-label">Notre promesse</span>
+        <h2>Chaque enfant trouve <span class="highlight-teal">sa place</span> — et ses <span class="highlight-red">deux voix</span></h2>
+        <p>
+          BISP n'est ni une ecole francaise qui enseigne l'anglais, ni une ecole anglaise qui enseigne le francais. C'est un lieu ou les deux langues sont egales, ou chaque matiere se vit dans les deux cultures, et ou votre enfant n'a pas besoin d'etre bilingue pour commencer.
+        </p>
+        <div class="promesse-features">
+          <div class="promesse-feature reveal reveal-delay-1">
+            <div class="promesse-feature-title">Double curriculum</div>
+            <div class="promesse-feature-desc">Cambridge International et Education Nationale — sans compromis sur l'un ni l'autre.</div>
+          </div>
+          <div class="promesse-feature reveal reveal-delay-2">
+            <div class="promesse-feature-title">12 eleves par classe</div>
+            <div class="promesse-feature-desc">Chaque enfant est vu, chaque progres est accompagne, personne ne passe inapercu.</div>
+          </div>
+          <div class="promesse-feature reveal reveal-delay-3">
+            <div class="promesse-feature-title">Enseignants natifs</div>
+            <div class="promesse-feature-desc">Un francophone et un anglophone travaillent en binome dans chaque classe.</div>
+          </div>
+          <div class="promesse-feature reveal reveal-delay-4">
+            <div class="promesse-feature-title">32 nationalites</div>
+            <div class="promesse-feature-desc">Une micro-societe internationale ou l'ouverture d'esprit se vit au quotidien.</div>
+          </div>
+        </div>
+      </div>
+      <div class="promesse-visual reveal reveal-delay-2">
+        <div class="promesse-dot-bg" aria-hidden="true"></div>
+        <div class="promesse-img-main">
+          <img src="../assets/images/fille-travaille.png" alt="Eleve concentree sur son travail" class="bw-to-color" loading="lazy">
+        </div>
+        <div class="promesse-img-accent">
+          <img src="../assets/stock/students-group.jpg" alt="Groupe d'eleves internationaux" class="bw-to-color" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PILIERS (diagonal teal) ========== -->
+<div class="diagonal-teal">
+  <section class="section-piliers" id="piliers">
+    <div class="container">
+      <div class="piliers-header reveal">
+        <h2>Ce qui rend BISP unique</h2>
+        <p>Quatre piliers qui definissent l'experience de chaque famille.</p>
+      </div>
+      <div class="piliers-grid">
+        <div class="pilier-card reveal reveal-delay-1">
+          <div class="pilier-number">01</div>
+          <h3 class="pilier-title">L'intimite</h3>
+          <p class="pilier-desc">Des classes de 12 eleves, 3 campus a taille humaine dans le 15e. Ici, tout le monde se connait — enseignants, parents, enfants. Votre enfant n'est jamais un numero.</p>
+        </div>
+        <div class="pilier-card reveal reveal-delay-2">
+          <div class="pilier-number">02</div>
+          <h3 class="pilier-title">Le double passeport</h3>
+          <p class="pilier-desc">Cambridge Assessment et Education Nationale, enseignes par des natifs des deux langues. Pas un compromis — les deux curricula complets, a 50/50.</p>
+        </div>
+        <div class="pilier-card reveal reveal-delay-3">
+          <div class="pilier-number">03</div>
+          <h3 class="pilier-title">Le monde ici</h3>
+          <p class="pilier-desc">32 nationalites reunies dans une ecole parisienne. Vos enfants ne font pas que decouvrir les cultures — ils grandissent dedans, naturellement.</p>
+        </div>
+        <div class="pilier-card reveal reveal-delay-4">
+          <div class="pilier-number">04</div>
+          <h3 class="pilier-title">La confiance</h3>
+          <p class="pilier-desc">Devenir bilingue n'est pas un objectif lointain — c'est le quotidien. Des 3 ans, l'immersion construit une seconde nature qui ouvre toutes les portes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ========== VIE DE CAMPUS ========== -->
+<section class="section-campus" id="campus">
+  <div class="container">
+    <div class="campus-header reveal">
+      <h2>La vie a <span class="highlight-green">BISP</span></h2>
+      <a href="#" class="campus-header-link" aria-label="Voir toutes les photos de la vie a BISP">
+        Explorer
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+    <div class="campus-mosaic">
+      <div class="campus-mosaic-item reveal">
+        <img src="../assets/stock/classroom-students.jpg" alt="Salle de classe vivante a BISP" class="bw-to-color" loading="lazy">
+        <div class="campus-mosaic-overlay">En classe — apprentissage bilingue</div>
+      </div>
+      <div class="campus-mosaic-item reveal reveal-delay-1">
+        <img src="../assets/stock/art-class.jpg" alt="Cours d'art et creativite" class="bw-to-color" loading="lazy">
+        <div class="campus-mosaic-overlay">Art et creativite</div>
+      </div>
+      <div class="campus-mosaic-item reveal reveal-delay-2">
+        <img src="../assets/stock/students-sports.jpg" alt="Sport et education physique" class="bw-to-color" loading="lazy">
+        <div class="campus-mosaic-overlay">Sport et depassement</div>
+      </div>
+      <div class="campus-mosaic-item reveal reveal-delay-3">
+        <img src="../assets/stock/library.jpg" alt="Bibliotheque et lecture" class="bw-to-color" loading="lazy">
+        <div class="campus-mosaic-overlay">Curiosite et decouverte</div>
+      </div>
+      <div class="campus-mosaic-item reveal reveal-delay-4">
+        <img src="../assets/stock/playground.jpg" alt="Recreations et jeux" class="bw-to-color" loading="lazy">
+        <div class="campus-mosaic-overlay">Moments de partage</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PARCOURS (diagonal off-white) ========== -->
+<div class="diagonal-red" id="parcours">
+  <section class="section-parcours">
+    <div class="container">
+      <div class="parcours-header reveal">
+        <h2>Un parcours complet, de <span class="highlight-orange">3 a 18 ans</span></h2>
+        <p>Quatre etapes, un seul fil conducteur : le bilinguisme comme seconde nature.</p>
+      </div>
+      <div class="parcours-timeline">
+        <div class="parcours-item reveal reveal-delay-1">
+          <div class="parcours-dot">3–6</div>
+          <h3 class="parcours-title">Maternelle</h3>
+          <div class="parcours-ages">3 a 6 ans</div>
+          <p class="parcours-desc">L'immersion commence ici. Les enfants vivent dans les deux langues sans meme y penser — a travers le jeu, les histoires, la musique.</p>
+        </div>
+        <div class="parcours-item reveal reveal-delay-2">
+          <div class="parcours-dot">6–11</div>
+          <h3 class="parcours-title">Primaire</h3>
+          <div class="parcours-ages">6 a 11 ans</div>
+          <p class="parcours-desc">Le double curriculum prend forme. Chaque matiere est enseignee dans les deux langues par des enseignants natifs. La 3e langue arrive des le CM1.</p>
+        </div>
+        <div class="parcours-item reveal reveal-delay-3">
+          <div class="parcours-dot">11–15</div>
+          <h3 class="parcours-title">College</h3>
+          <div class="parcours-ages">11 a 15 ans</div>
+          <p class="parcours-desc">La pensee critique s'aiguise. Les eleves se preparent aux examens Cambridge et francais, avec un suivi personnalise qui pousse chacun a son meilleur.</p>
+        </div>
+        <div class="parcours-item reveal reveal-delay-4">
+          <div class="parcours-dot">15–18</div>
+          <h3 class="parcours-title">Lycee</h3>
+          <div class="parcours-ages">15 a 18 ans</div>
+          <p class="parcours-desc">Le double diplome ouvre les portes des universites francaises, britanniques et internationales. Un passeport academique sans frontiere.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ========== TEMOIGNAGES ========== -->
+<section class="section-temoignages" id="temoignages">
+  <div class="dot-pattern" aria-hidden="true"></div>
+  <div class="container">
+    <div class="temoignages-header reveal">
+      <h2>Ce que disent nos familles</h2>
+      <p>32 nationalites, une meme conviction.</p>
+    </div>
+    <div class="temoignages-slider">
+      <div class="temoignage-card reveal reveal-delay-1">
+        <p class="temoignage-quote">
+          Notre fille est arrivee a BISP sans parler un mot de francais. Six mois plus tard, elle racontait ses journees dans les deux langues. Ce n'est pas juste une ecole — c'est une transformation.
+        </p>
+        <div class="temoignage-author">
+          <img src="../assets/stock/student-portrait1.jpg" alt="" class="temoignage-avatar" loading="lazy">
+          <div>
+            <div class="temoignage-name">Sarah M.</div>
+            <div class="temoignage-role">Mere de famille — britannique</div>
+          </div>
+        </div>
+      </div>
+      <div class="temoignage-card reveal reveal-delay-2">
+        <p class="temoignage-quote">
+          Ce qui m'a convaincu, c'est la taille des classes. Dans 12 eleves, les enseignants connaissent vraiment chaque enfant. Mon fils a retrouve confiance en lui en quelques semaines.
+        </p>
+        <div class="temoignage-author">
+          <img src="../assets/stock/student-portrait2.jpg" alt="" class="temoignage-avatar" loading="lazy">
+          <div>
+            <div class="temoignage-name">Kenji T.</div>
+            <div class="temoignage-role">Pere de famille — japonais</div>
+          </div>
+        </div>
+      </div>
+      <div class="temoignage-card reveal reveal-delay-3">
+        <p class="temoignage-quote">
+          Nous avons demenage trois fois en cinq ans. Le double curriculum Cambridge-francais de BISP a donne a nos enfants une continuite academique que nous n'avions trouvee nulle part ailleurs.
+        </p>
+        <div class="temoignage-author">
+          <img src="../assets/stock/graduation.jpg" alt="" class="temoignage-avatar" loading="lazy">
+          <div>
+            <div class="temoignage-name">Clara & Luca D.</div>
+            <div class="temoignage-role">Parents — italo-bresiliens</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PARIS ========== -->
+<section class="section-paris" id="paris">
+  <div class="container">
+    <div class="paris-grid">
+      <div class="paris-visual reveal">
+        <img src="../assets/stock/paris-cityscape.jpg" alt="Paris, le 15e arrondissement — quartier familial" class="bw-to-color" loading="lazy">
+        <div class="paris-badge">Paris 15e</div>
+      </div>
+      <div class="paris-text reveal reveal-delay-1">
+        <span class="paris-label">Notre quartier</span>
+        <h2>Paris comme <span class="highlight-green">terrain d'apprentissage</span></h2>
+        <p>
+          Le 15e arrondissement n'est pas un decor — c'est un prolongement de la salle de classe. Quartier residentiel, familial, sur. Les musees, les bords de Seine, les marches et les parcs sont accessibles a pied.
+        </p>
+        <p>
+          Trois campus a echelle humaine, dans des rues calmes ou les enfants grandissent en securite. Pas de tour de verre, pas de campus impersonnel — des lieux ou tout le monde se connait.
+        </p>
+        <div class="paris-features">
+          <span class="paris-tag">3 campus</span>
+          <span class="paris-tag">Quartier familial</span>
+          <span class="paris-tag">Culture a pied</span>
+          <span class="paris-tag">Bords de Seine</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== ACCREDITATIONS ========== -->
+<section class="section-accreditations" id="accreditations">
+  <div class="container">
+    <div class="accred-inner reveal">
+      <div class="accred-text">
+        <span class="accred-label">Accreditations</span>
+        <h2>Reconnu par les meilleurs <span class="highlight-orange">systemes academiques</span></h2>
+        <p>
+          Le double curriculum BISP s'appuie sur Cambridge International et Pearson Edexcel — des standards reconnus dans le monde entier. Vos enfants obtiennent un passeport academique qui ouvre les portes des universites francaises, britanniques et internationales.
+        </p>
+      </div>
+      <div class="accred-logos">
+        <div class="accred-logo-item">
+          <img src="../assets/logos/cambridge.png" alt="Cambridge International" loading="lazy">
+        </div>
+        <div class="accred-logo-item">
+          <img src="../assets/logos/pearson-edexcel.png" alt="Pearson Edexcel" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CTA FINAL ========== -->
+<section class="section-cta" id="contact">
+  <div class="dot-pattern" aria-hidden="true"></div>
+  <div class="container">
+    <div class="cta-content reveal">
+      <h2>Offrez-leur <span class="highlight-teal">deux voix</span><br>pour un monde entier</h2>
+      <p>
+        Les inscriptions sont ouvertes toute l'annee. Votre enfant n'a pas besoin d'etre bilingue — BISP s'adapte a chaque parcours individuel.
+      </p>
+      <div class="cta-buttons">
+        <a href="#" class="btn-cta-primary">
+          Demander une inscription
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#" class="btn-cta-secondary">
+          Planifier une visite privee
+        </a>
+      </div>
+      <span class="cta-phone">Ou appelez-nous : <a href="tel:+33144189483">+33 (0)1 44 18 94 83</a></span>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="../assets/logos/logo-bisp-header.svg" alt="BISP" loading="lazy">
+        <p>Bilingual International School of Paris. Depuis 2012, nous donnons a chaque enfant du monde un double passeport academique et la confiance de grandir entre les cultures.</p>
+      </div>
+      <div class="footer-col">
+        <h4>L'ecole</h4>
+        <ul>
+          <li><a href="#">Notre histoire</a></li>
+          <li><a href="#">Equipe pedagogique</a></li>
+          <li><a href="#">Nos campus</a></li>
+          <li><a href="#">Accreditations</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Programmes</h4>
+        <ul>
+          <li><a href="#">Maternelle (3–6 ans)</a></li>
+          <li><a href="#">Primaire (6–11 ans)</a></li>
+          <li><a href="#">College (11–15 ans)</a></li>
+          <li><a href="#">Lycee (15–18 ans)</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="tel:+33144189483">+33 (0)1 44 18 94 83</a></li>
+          <li><a href="#">61-63 rue des Entrepreneurs</a></li>
+          <li><a href="#">75015 Paris</a></li>
+          <li><a href="#">operations@bisparis.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 BISP — Bilingual International School of Paris</span>
+      <div class="footer-bottom-links">
+        <a href="#">Mentions legales</a>
+        <a href="#">Politique de confidentialite</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ========== SCROLL REVEAL ========== */
+(function() {
+  const reveals = document.querySelectorAll('.reveal');
+  if (!reveals.length) return;
+
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  reveals.forEach(function(el) { observer.observe(el); });
+})();
+
+/* ========== COUNTER ANIMATION ========== */
+(function() {
+  var animated = false;
+  var statsSection = document.querySelector('.hero-stats');
+  if (!statsSection) return;
+
+  function animateCounters() {
+    if (animated) return;
+    animated = true;
+    var counters = document.querySelectorAll('[data-target]');
+    counters.forEach(function(counter) {
+      var target = parseInt(counter.getAttribute('data-target'));
+      var accent = counter.querySelector('[class*="stat-accent"]');
+      if (!accent) return;
+      var duration = 1800;
+      var start = 0;
+      var startTime = null;
+
+      function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        var progress = Math.min((timestamp - startTime) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        var current = Math.floor(eased * target);
+        accent.textContent = current;
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          accent.textContent = target;
+        }
+      }
+      requestAnimationFrame(step);
+    });
+  }
+
+  var observer = new IntersectionObserver(function(entries) {
+    if (entries[0].isIntersecting) {
+      animateCounters();
+      observer.disconnect();
+    }
+  }, { threshold: 0.5 });
+  observer.observe(statsSection);
+})();
+
+/* ========== NAV SCROLL STATE ========== */
+(function() {
+  var nav = document.querySelector('.nav');
+  var scrolled = false;
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 40 && !scrolled) {
+      nav.classList.add('scrolled');
+      scrolled = true;
+    } else if (window.scrollY <= 40 && scrolled) {
+      nav.classList.remove('scrolled');
+      scrolled = false;
+    }
+  }, { passive: true });
+})();
+
+/* ========== MOBILE MENU ========== */
+(function() {
+  var btn = document.getElementById('mobile-menu-btn');
+  var menu = document.getElementById('nav-menu');
+  if (!btn || !menu) return;
+
+  btn.addEventListener('click', function() {
+    var isOpen = btn.classList.toggle('open');
+    menu.classList.toggle('open');
+    btn.setAttribute('aria-expanded', isOpen);
+    btn.setAttribute('aria-label', isOpen ? 'Fermer le menu' : 'Ouvrir le menu');
+  });
+
+  menu.querySelectorAll('a').forEach(function(link) {
+    link.addEventListener('click', function() {
+      btn.classList.remove('open');
+      menu.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    });
+  });
+})();
+
+/* ========== SMOOTH SCROLL (polyfill for anchors) ========== */
+(function() {
+  document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      var target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        var offset = 80;
+        var top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: top, behavior: 'smooth' });
+      }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
