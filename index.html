@@ -159,8 +159,8 @@ const CMP=["Meilleure image ou vid\u00e9o d\u2019accueil","Meilleur menu de navi
 
 let D={mockups:{},cmp:{},top3:[{},{},{}],hyb:{},vis:{}};
 let cur=0,leftOpen=false,rightOpen=false,panelTab=0;
-try{const s=localStorage.getItem('bisp-eval2');if(s)D=JSON.parse(s)}catch(e){}
-function save(){try{localStorage.setItem('bisp-eval2',JSON.stringify(D))}catch(e){}}
+try{const s=localStorage.getItem('bisp-eval-v2');if(s)D=JSON.parse(s)}catch(e){}
+function save(){try{localStorage.setItem('bisp-eval-v2',JSON.stringify(D))}catch(e){}}
 
 function init(){buildSiteList();goSite(0);updateProgress()}
 
