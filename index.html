@@ -312,7 +312,7 @@ function updateSiteChecks(){
     M.forEach((m,i)=>{
         const d=D.mockups[m.id];const filled=d?Object.keys(d.ratings).length:0;
         const btn=document.getElementById('sb'+i);const ex=btn.querySelector('.sb-check');
-        if(filled>=19&&!ex){const sp=document.createElement('span');sp.className='sb-check';sp.textContent='✓';btn.appendChild(sp)}
+        if(filled>=26&&!ex){const sp=document.createElement('span');sp.className='sb-check';sp.textContent='✓';btn.appendChild(sp)}
         else if(filled<19&&ex){ex.remove()}
     });
 }
