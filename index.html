@@ -318,7 +318,7 @@ function updateSiteChecks(){
 }
 
 function updateProgress(){
-    let total=M.length*19+CMP.length+18,filled=0;
+    let total=M.length*26+CMP.length+18,filled=0;
     Object.values(D.mockups).forEach(m=>{filled+=Object.keys(m.ratings).length});
     filled+=Object.values(D.cmp).filter(v=>v).length;
     filled+=Object.keys(D.hyb).filter(k=>!k.endsWith('_why')&&D.hyb[k]).length;
