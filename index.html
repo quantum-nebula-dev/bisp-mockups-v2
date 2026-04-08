@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BISP — Évaluation & Hybridation des Maquettes</title>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{--navy:#1a2744;--gold:#c4a35a;--cream:#f5f0eb;--white:#fff;--text:#2d2d2d;--muted:#6b7280;--light:#f3f4f6;--border:#e5e7eb;--pw:440px}
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'DM Sans',sans-serif;background:#111;color:var(--text);overflow:hidden}
+
+        /* IFRAME fullscreen */
+        .iframe-wrap{position:fixed;top:0;left:0;right:0;bottom:0;z-index:1}
+        .iframe-wrap iframe{width:100%;height:100%;border:none;background:var(--white)}
+
+        /* LEFT NAV */
+        .left-toggle{position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:150;background:var(--navy);color:var(--white);border:none;padding:1rem 0.45rem;border-radius:0 8px 8px 0;cursor:pointer;font-family:inherit;font-size:0.68rem;writing-mode:vertical-rl;letter-spacing:0.08em;font-weight:600;box-shadow:2px 0 12px rgba(0,0,0,0.2);transition:all 0.3s}
+        .left-toggle:hover{background:var(--gold);color:var(--navy)}
+        .left-toggle.open{left:var(--pw)}
+        .left-panel{position:fixed;top:0;left:calc(-1 * var(--pw));bottom:0;width:var(--pw);z-index:140;background:var(--white);border-right:1px solid var(--border);box-shadow:4px 0 24px rgba(0,0,0,0.1);overflow-y:auto;transition:left 0.3s ease;padding:1.2rem}
+        .left-panel.open{left:0}
+        .lp-brand{font-family:'EB Garamond',serif;font-size:1.3rem;color:var(--navy);margin-bottom:0.3rem}
+        .lp-brand span{color:var(--gold)}
+        .lp-sub{font-size:0.75rem;color:var(--muted);margin-bottom:1rem}
+        .lp-section{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);margin:1rem 0 0.4rem;padding-bottom:0.2rem;border-bottom:1px solid var(--cream)}
+        .site-btn{display:flex;align-items:center;gap:0.6rem;width:100%;padding:0.55rem 0.7rem;border:none;border-radius:6px;background:transparent;cursor:pointer;font-family:inherit;font-size:0.82rem;color:var(--text);transition:all 0.15s;text-align:left}
+        .site-btn:hover{background:var(--cream)}
+        .site-btn.active{background:var(--navy);color:var(--white)}
+        .site-btn .sb-rank{font-weight:700;color:var(--gold);min-width:22px}
+        .site-btn.active .sb-rank{color:var(--gold)}
+        .site-btn .sb-name{flex:1}
+        .site-btn .sb-check{color:#4ade80;font-size:0.7rem}
+        .lp-export{display:block;width:100%;padding:0.55rem;border-radius:20px;background:var(--navy);color:var(--white);border:none;cursor:pointer;font-family:inherit;font-size:0.78rem;font-weight:600;margin-top:1rem}
+        .lp-export:hover{background:var(--gold);color:var(--navy)}
+        .lp-progress{height:4px;background:var(--cream);border-radius:2px;margin-top:0.8rem;overflow:hidden}
+        .lp-progress-fill{height:100%;background:var(--gold);transition:width 0.3s;width:0%}
+        .lp-progress-label{font-size:0.65rem;color:var(--muted);margin-top:0.3rem;text-align:center}
+
+        /* RIGHT PANEL */
+        .right-toggle{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:150;background:var(--navy);color:var(--white);border:none;padding:1rem 0.45rem;border-radius:8px 0 0 8px;cursor:pointer;font-family:inherit;font-size:0.68rem;writing-mode:vertical-rl;letter-spacing:0.08em;font-weight:600;box-shadow:-2px 0 12px rgba(0,0,0,0.2);transition:all 0.3s}
+        .right-toggle:hover{background:var(--gold);color:var(--navy)}
+        .right-toggle.open{right:var(--pw)}
+        .right-panel{position:fixed;top:0;right:calc(-1 * var(--pw));bottom:0;width:var(--pw);z-index:140;background:var(--white);border-left:1px solid var(--border);box-shadow:-4px 0 24px rgba(0,0,0,0.1);overflow-y:auto;transition:right 0.3s ease;display:flex;flex-direction:column}
+        .right-panel.open{right:0}
+
+        /* Sub-tabs in right panel */
+        .panel-tabs{display:flex;border-bottom:2px solid var(--cream);background:var(--white);position:sticky;top:0;z-index:2;flex-shrink:0}
+        .ptab{flex:1;padding:0.6rem 0.3rem;border:none;background:transparent;cursor:pointer;font-family:inherit;font-size:0.7rem;font-weight:600;color:var(--muted);transition:all 0.15s;border-bottom:2px solid transparent;margin-bottom:-2px}
+        .ptab:hover{color:var(--navy)}
+        .ptab.active{color:var(--navy);border-bottom-color:var(--gold)}
+        .panel-content{flex:1;overflow-y:auto;padding:1.2rem}
+
+        /* Panel form styles */
+        .ph h2{font-family:'EB Garamond',serif;font-size:1.3rem;color:var(--navy);margin-bottom:0.15rem}
+        .ph .sd{font-size:0.75rem;color:var(--muted);font-style:italic;margin-bottom:0.8rem}
+        .rg{margin-bottom:0.9rem}
+        .rg-t{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold);margin-bottom:0.35rem;padding-bottom:0.2rem;border-bottom:2px solid var(--cream)}
+        .ri{margin-bottom:0.55rem}
+        .ri-comment{display:block;width:100%;margin-top:0.2rem;padding:0.3rem;border:1px solid var(--border);border-radius:4px;font-family:inherit;font-size:0.7rem;color:var(--muted);resize:vertical;min-height:28px;background:var(--light);transition:border-color 0.15s}
+        .ri-comment:focus{outline:none;border-color:var(--gold);color:var(--text);background:var(--white)}
+        .rl{font-size:0.76rem;color:var(--text);margin-bottom:0.15rem;line-height:1.3}
+        .rs{display:flex;gap:3px}
+        .sb{width:29px;height:29px;border-radius:5px;border:1.5px solid var(--border);background:var(--white);font-size:0.76rem;font-weight:700;color:var(--muted);cursor:pointer;transition:all 0.12s;font-family:inherit}
+        .sb:hover{border-color:var(--gold);color:var(--gold)}
+        .sb.sel{background:var(--navy);border-color:var(--navy);color:var(--white)}
+        .tq{margin-bottom:0.7rem}
+        .tq label{display:block;font-size:0.76rem;font-weight:600;color:var(--navy);margin-bottom:0.15rem}
+        .tq textarea{width:100%;padding:0.35rem;border:1.5px solid var(--border);border-radius:5px;font-family:inherit;font-size:0.76rem;resize:vertical;min-height:40px}
+        .tq textarea:focus{outline:none;border-color:var(--gold)}
+
+        /* Comparison/Hybrid/Vision in panel */
+        .p-section-title{font-family:'EB Garamond',serif;font-size:1.2rem;color:var(--navy);margin-bottom:0.5rem}
+        .p-intro{font-size:0.76rem;color:var(--muted);margin-bottom:1rem;line-height:1.4;font-style:italic}
+        .p-row{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.7rem;padding:0.5rem;border-radius:6px}
+        .p-row:nth-child(odd){background:var(--cream)}
+        .p-row label{font-size:0.78rem;font-weight:600;color:var(--navy)}
+        .p-row select,.p-row input{padding:0.35rem;border:1.5px solid var(--border);border-radius:5px;font-family:inherit;font-size:0.76rem;width:100%}
+        .p-row select:focus,.p-row input:focus{outline:none;border-color:var(--gold)}
+        .p-row small{font-size:0.68rem;color:var(--muted);font-style:italic}
+        .hyb-sec{margin-bottom:1.2rem}
+        .hyb-sec h4{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--gold);margin-bottom:0.4rem;padding-bottom:0.2rem;border-bottom:2px solid var(--cream)}
+        .hyb-row{margin-bottom:0.6rem;padding:0.5rem;border-radius:6px}
+        .hyb-row:nth-child(odd){background:var(--cream)}
+        .hyb-row .hyb-label{font-size:0.78rem;font-weight:600;color:var(--navy);margin-bottom:0.1rem}
+        .hyb-row .hyb-desc{font-size:0.68rem;color:var(--muted);font-style:italic;margin-bottom:0.3rem}
+        .hyb-row select,.hyb-row input{padding:0.35rem;border:1.5px solid var(--border);border-radius:5px;font-family:inherit;font-size:0.76rem;width:100%;margin-bottom:0.2rem}
+        .vis-q{margin-bottom:1rem}
+        .vis-q label{display:block;font-size:0.78rem;font-weight:600;color:var(--navy);margin-bottom:0.15rem}
+        .vis-q .hint{font-size:0.68rem;color:var(--muted);font-style:italic;margin-bottom:0.3rem}
+        .vis-q textarea{width:100%;padding:0.35rem;border:1.5px solid var(--border);border-radius:5px;font-family:inherit;font-size:0.76rem;resize:vertical;min-height:50px}
+        .vis-q textarea:focus{outline:none;border-color:var(--gold)}
+        .t3-row{display:flex;gap:0.4rem;margin-bottom:0.4rem;align-items:center}
+        .t3-rank{font-family:'EB Garamond',serif;font-size:1.2rem;color:var(--gold);font-weight:700;min-width:28px}
+        .t3-row select,.t3-row input{flex:1;padding:0.35rem;border:1.5px solid var(--border);border-radius:5px;font-family:inherit;font-size:0.76rem}
+
+        /* Toast */
+        .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--white);padding:0.8rem 1.5rem;border-radius:8px;font-size:0.85rem;z-index:300;display:none;box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+        .toast.show{display:block;animation:pop 0.3s}
+        @keyframes pop{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+    </style>
+</head>
+<body>
+
+<div class="iframe-wrap"><iframe id="mockupFrame" src=""></iframe></div>
+
+<button class="left-toggle" id="leftToggle" onclick="toggleLeft()">SITES ▶</button>
+<div class="left-panel" id="leftPanel">
+    <div class="lp-brand">BISP <span>Phase 1</span></div>
+    <div class="lp-sub">Évaluation & Hybridation — Avril 2026</div>
+    <div class="lp-section">9 Maquettes</div>
+    <div id="siteList"></div>
+    <button class="lp-export" onclick="exportJSON()">Exporter mes réponses (JSON)</button>
+    <div class="lp-progress"><div class="lp-progress-fill" id="pFill"></div></div>
+    <div class="lp-progress-label" id="pLabel">0%</div>
+</div>
+
+<button class="right-toggle" id="rightToggle" onclick="toggleRight()">◀ NOTER</button>
+<div class="right-panel" id="rightPanel">
+    <div class="panel-tabs">
+        <button class="ptab active" id="ptab0" onclick="switchPanelTab(0)">Noter</button>
+        <button class="ptab" id="ptab1" onclick="switchPanelTab(1)">Comparer</button>
+        <button class="ptab" id="ptab2" onclick="switchPanelTab(2)">Hybrider</button>
+        <button class="ptab" id="ptab3" onclick="switchPanelTab(3)">Vision</button>
+    </div>
+    <div class="panel-content" id="panelContent"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const M=[
+    {id:"aiglon",name:"Aiglon",rank:1,url:"inspired-aiglon/index.html",style:"Cinématique sombre, mots-clés rouges, or, ombres dramatiques"},
+    {id:"lerosey",name:"Le Rosey",rank:2,url:"inspired-lerosey/index.html",style:"Bichromatique old money, serif pur, retenue absolue"},
+    {id:"sevenoaks",name:"Sevenoaks",rank:3,url:"inspired-sevenoaks/index.html",style:"Split hero teal, sobriété radicale, mosaïque photo"},
+    {id:"gordonstoun",name:"Gordonstoun",rank:4,url:"inspired-gordonstoun/index.html",style:"Pourpre magazine, layout asymétrique, texture grain"},
+    {id:"kentcollege",name:"Kent College",rank:5,url:"inspired-kentcollege/index.html",style:"Rouge énergique, formes organiques, anti-scolaire"},
+    {id:"repton",name:"Repton",rank:6,url:"inspired-repton/index.html",style:"Navy + or, timeline dorée, quiet luxury"},
+    {id:"ecoledesroches",name:"École des Roches",rank:7,url:"inspired-ecoledesroches/index.html",style:"Navy + or vif, ombres cinéma, pills arrondies"},
+    {id:"beausoleil",name:"Beau Soleil",rank:8,url:"inspired-beausoleil/index.html",style:"Swiss polish, alternance blanc/navy, boutons pill"},
+    {id:"hautlac",name:"Haut-Lac",rank:9,url:"inspired-hautlac/index.html",style:"Teal + rouge, coupes diagonales, photos N&B"},
+];
+const CRIT=[
+    {cat:"Première impression",desc:"Parcourez rapidement la page, puis notez\u00a0:",items:["L\u2019impact visuel vous donne-t-il envie de poursuivre\u00a0?","Le site inspire-t-il confiance et professionnalisme\u00a0?","Correspond-il \u00e0 l\u2019image de BISP\u00a0? (chaleureux, international, premium)"]},
+    {cat:"Couleurs",desc:"Observez les couleurs dominantes (fond, texte, boutons)\u00a0:",items:["Les couleurs s\u2019accordent-elles bien entre elles\u00a0?","Le texte est-il lisible sur les diff\u00e9rents fonds\u00a0?","La palette donne-t-elle une identit\u00e9 forte au site\u00a0?"]},
+    {cat:"Polices de caract\u00e8res",desc:"Observez les titres, sous-titres et textes courants\u00a0:",items:["La lecture est-elle agr\u00e9able et fluide\u00a0?","Distingue-t-on clairement ce qui est important\u00a0?","Les polices ont-elles du caract\u00e8re et de la personnalit\u00e9\u00a0?"]},
+    {cat:"Mise en page",desc:"Observez l\u2019organisation des blocs sur la page\u00a0:",items:["La page est-elle bien structur\u00e9e\u00a0?","Y a-t-il suffisamment d\u2019espace entre les \u00e9l\u00e9ments\u00a0?","Le style reste-t-il coh\u00e9rent du d\u00e9but \u00e0 la fin\u00a0?","Les transitions entre les sections sont-elles harmonieuses\u00a0?"]},
+    {cat:"Sections principales",desc:"Portez attention au haut de page et au menu\u00a0:",items:["La grande image ou vid\u00e9o d\u2019accueil a-t-elle de l\u2019impact\u00a0?","Le menu est-il clair et \u00e9l\u00e9gant\u00a0?","Les diff\u00e9rentes sections sont-elles vari\u00e9es et engageantes\u00a0?"]},
+    {cat:"Ressenti global",desc:"Votre impression apr\u00e8s avoir parcouru la page enti\u00e8re\u00a0:",items:["Ce site vous procure-t-il une \u00e9motion positive\u00a0?","Donne-t-il envie de contacter l\u2019\u00e9cole ou de planifier une visite\u00a0?","Est-il original et m\u00e9morable\u00a0?"]},
+];
+const HYB=[
+    {title:"Hero / Accueil",items:[{el:"Traitement vidéo / image",desc:"Plein écran\u00a0? Split\u00a0? Overlay\u00a0?"},{el:"Titre et sous-titre",desc:"Police, taille, couleur, animation"},{el:"Badges de preuve",desc:"300 élèves, 32 nationalités..."},{el:"Boutons d\u2019action",desc:"Style, couleur, texte"}]},
+    {title:"Navigation & Structure",items:[{el:"Menu principal",desc:"Police, espacement, comportement"},{el:"CTA dans la nav",desc:"\u00ab\u00a0Planifier une visite\u00a0\u00bb"},{el:"Structure de la page",desc:"Ordre des sections, rythme"}]},
+    {title:"Identité visuelle",items:[{el:"Palette de couleurs",desc:"Dominante + accents"},{el:"Typographie titres",desc:"Serif / sans-serif, graisse"},{el:"Typographie corps",desc:"Police, taille, interligne"},{el:"Ambiance / émotion",desc:"Le feeling global"}]},
+    {title:"Sections clés",items:[{el:"4 Promesses",desc:"Layout, icônes, style"},{el:"Chiffres clés",desc:"Compteurs, fond, présentation"},{el:"Programmes",desc:"Cards, timeline, photos, tarifs"},{el:"Témoignages",desc:"Carrousel, quotes, diversité"},{el:"Mot du directeur",desc:"Photo, citation, mise en valeur"},{el:"Footer",desc:"Colonnes, infos, accréditations"}]},
+];
+const CMP=["Meilleure image ou vid\u00e9o d\u2019accueil","Meilleur menu de navigation","Meilleure palette de couleurs","Meilleures polices de caract\u00e8res","Meilleure mise en page","Meilleure pr\u00e9sentation des programmes","Meilleure section t\u00e9moignages","Le plus inspirant \u00e9motionnellement","Le plus professionnel","Le plus original","Le plus adapt\u00e9 \u00e0 BISP"];
+
+let D={mockups:{},cmp:{},top3:[{},{},{}],hyb:{},vis:{}};
+let cur=0,leftOpen=false,rightOpen=false,panelTab=0;
+try{const s=localStorage.getItem('bisp-eval2');if(s)D=JSON.parse(s)}catch(e){}
+function save(){try{localStorage.setItem('bisp-eval2',JSON.stringify(D))}catch(e){}}
+
+function init(){buildSiteList();goSite(0);updateProgress()}
+
+function buildSiteList(){
+    const el=document.getElementById('siteList');
+    M.forEach((m,i)=>{
+        const b=document.createElement('button');b.className='site-btn';b.id='sb'+i;
+        b.innerHTML=`<span class="sb-rank">#${m.rank}</span><span class="sb-name">${m.name}</span>`;
+        b.onclick=()=>goSite(i);el.appendChild(b);
+    });
+}
+
+function goSite(i){
+    cur=i;
+    document.getElementById('mockupFrame').src=M[i].url;
+    document.querySelectorAll('.site-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+    if(panelTab===0)buildNoter();
+    if(leftOpen)toggleLeft();
+}
+
+function toggleLeft(){
+    leftOpen=!leftOpen;
+    document.getElementById('leftPanel').classList.toggle('open',leftOpen);
+    document.getElementById('leftToggle').classList.toggle('open',leftOpen);
+    document.getElementById('leftToggle').innerHTML=leftOpen?'◀ SITES':'SITES ▶';
+}
+function toggleRight(){
+    rightOpen=!rightOpen;
+    document.getElementById('rightPanel').classList.toggle('open',rightOpen);
+    document.getElementById('rightToggle').classList.toggle('open',rightOpen);
+    document.getElementById('rightToggle').innerHTML=rightOpen?'FERMER ▶':'◀ NOTER';
+}
+
+function switchPanelTab(idx){
+    panelTab=idx;
+    document.querySelectorAll('.ptab').forEach((t,i)=>t.classList.toggle('active',i===idx));
+    if(idx===0)buildNoter();
+    else if(idx===1)buildComparer();
+    else if(idx===2)buildHybrider();
+    else buildVisionPanel();
+}
+
+// === TAB 0: NOTER ===
+function buildNoter(){
+    const m=M[cur];
+    if(!D.mockups[m.id])D.mockups[m.id]={ratings:{},comments:{},firstNotice:'',emotion:'',standout:'',keep:'',change:''};
+    if(!D.mockups[m.id].comments)D.mockups[m.id].comments={};
+    const d=D.mockups[m.id],pc=document.getElementById('panelContent');
+    let h=`<div class="ph"><h2>#${m.rank} ${m.name}</h2><p class="sd">${m.style}</p></div>`;
+    CRIT.forEach(g=>{
+        h+=`<div class="rg"><div class="rg-t">${g.cat}</div>${g.desc?`<div style="font-size:0.68rem;color:var(--muted);font-style:italic;margin-bottom:0.4rem">${g.desc}</div>`:''}`;
+        g.items.forEach(item=>{
+            const v=d.ratings[item]||0;
+            const ckey=m.id+'__comment__'+item;
+            const cval=D.mockups[m.id].comments?D.mockups[m.id].comments[item]||'':'';
+            h+=`<div class="ri"><div class="rl">${item}</div><div class="rs">
+                ${[1,2,3,4,5].map(n=>`<button class="sb ${v===n?'sel':''}" onclick="rate('${m.id}',\`${item}\`,${n})">${n}</button>`).join('')}
+            </div><textarea class="ri-comment" placeholder="" onchange="saveComment('${m.id}',\`${item}\`,this.value)">${cval}</textarea></div>`;
+        });
+        h+='</div>';
+    });
+    h+=`<div class="tq"><label>Quel est le premier \u00e9l\u00e9ment que vous remarquez\u00a0?</label><textarea onchange="D.mockups['${m.id}'].firstNotice=this.value;save()">${d.firstNotice||''}</textarea></div>`;
+    h+=`<div class="tq"><label>\u00c0 quoi ce design vous fait-il penser\u00a0?</label><textarea onchange="D.mockups['${m.id}'].emotion=this.value;save()">${d.emotion||''}</textarea></div>`;
+    h+=`<div class="tq"><label>Quel \u00e9l\u00e9ment vous a le plus marqu\u00e9\u00a0?</label><textarea onchange="D.mockups['${m.id}'].standout=this.value;save()">${d.standout||''}</textarea></div>`;
+    h+=`<div class="tq"><label>Que garderiez-vous absolument\u00a0?</label><textarea onchange="D.mockups['${m.id}'].keep=this.value;save()">${d.keep||''}</textarea></div>`;
+    h+=`<div class="tq"><label>Que changeriez-vous\u00a0?</label><textarea onchange="D.mockups['${m.id}'].change=this.value;save()">${d.change||''}</textarea></div>`;
+    pc.innerHTML=h;pc.scrollTop=0;
+}
+
+function rate(id,crit,val){
+    D.mockups[id].ratings[crit]=val;save();
+    // Update just the buttons without rebuilding (avoids scroll reset)
+    document.querySelectorAll('.rs').forEach(row=>{
+        const label=row.previousElementSibling;
+        if(label&&label.textContent===crit){
+            row.querySelectorAll('.sb').forEach(btn=>{
+                btn.classList.toggle('sel',parseInt(btn.textContent)===val);
+            });
+        }
+    });
+    updateProgress();updateSiteChecks();
+}
+
+function saveComment(id,crit,val){
+    if(!D.mockups[id].comments)D.mockups[id].comments={};
+    D.mockups[id].comments[crit]=val;save();
+}
+
+// === TAB 1: COMPARER ===
+function buildComparer(){
+    const opts=M.map(m=>`<option value="${m.id}" ${D.cmp[m.id]?'':''}>${m.name}</option>`).join('');
+    const pc=document.getElementById('panelContent');
+    let h=`<div class="p-section-title">Comparaison directe</div><p class="p-intro">Pour chaque aspect, quelle maquette vous semble la plus r\u00e9ussie\u00a0? N\u2019h\u00e9sitez pas \u00e0 revoir les sites via le panneau de gauche.</p>`;
+    if(!D.cmpComments)D.cmpComments={};
+    CMP.forEach(a=>{
+        const sel=D.cmp[a]||'';
+        const cc=D.cmpComments[a]||'';
+        h+=`<div class="p-row"><label>${a}</label><select onchange="D.cmp[\`${a}\`]=this.value;save();updateProgress()"><option value="">— Choisir —</option>${M.map(m=>`<option value="${m.id}" ${sel===m.id?'selected':''}>${m.name}</option>`).join('')}</select><textarea class="ri-comment" placeholder="" onchange="if(!D.cmpComments)D.cmpComments={};D.cmpComments[\`${a}\`]=this.value;save()">${cc}</textarea></div>`;
+    });
+    h+=`<div style="margin-top:1.2rem"><div class="rg-t">Votre Top 3</div>`;
+    ['1er','2e','3e'].forEach((r,i)=>{
+        h+=`<div class="t3-row" style="flex-direction:column;align-items:stretch"><div style="display:flex;gap:0.4rem;align-items:center"><span class="t3-rank">${r}</span><select style="flex:1" onchange="D.top3[${i}].choice=this.value;save()"><option value="">—</option>${M.map(m=>`<option value="${m.id}" ${(D.top3[i].choice||'')===m.id?'selected':''}>${m.name}</option>`).join('')}</select></div><textarea class="ri-comment" placeholder="" onchange="D.top3[${i}].why=this.value;save()">${D.top3[i].why||''}</textarea></div>`;
+    });
+    h+='</div>';
+    pc.innerHTML=h;pc.scrollTop=0;
+}
+
+// === TAB 2: HYBRIDER ===
+function buildHybrider(){
+    const pc=document.getElementById('panelContent');
+    let h=`<div class="p-section-title">Hybridation</div><p class="p-intro">Composez votre site id\u00e9al en s\u00e9lectionnant les meilleurs \u00e9l\u00e9ments de chaque maquette. Consultez les sites via le panneau de gauche pour comparer.</p>`;
+    HYB.forEach(s=>{
+        h+=`<div class="hyb-sec"><h4>${s.title}</h4>`;
+        s.items.forEach(item=>{
+            const k=(s.title+'_'+item.el).replace(/[^a-zA-Z0-9]/g,'_');
+            const sel=D.hyb[k]||'';
+            const why=D.hyb[k+'_why']||'';
+            h+=`<div class="hyb-row"><div class="hyb-label">${item.el}</div><div class="hyb-desc">${item.desc}</div>
+                <select onchange="D.hyb['${k}']=this.value;save();updateProgress()"><option value="">— Choisir —</option>${M.map(m=>`<option value="${m.id}" ${sel===m.id?'selected':''}>${m.name}</option>`).join('')}</select>
+                <textarea class="ri-comment" placeholder="" onchange="D.hyb['${k}_why']=this.value;save()">${why}</textarea>
+            </div>`;
+        });
+        h+='</div>';
+    });
+    pc.innerHTML=h;pc.scrollTop=0;
+}
+
+// === TAB 3: VISION ===
+function buildVisionPanel(){
+    const pc=document.getElementById('panelContent');
+    const qs=[
+        {q:"Quelle \u00e9motion un parent devrait-il ressentir en arrivant sur le site\u00a0?",hint:""},
+        {q:"Quels adjectifs d\u00e9crivent le mieux le site BISP id\u00e9al\u00a0?",hint:"ex.\u00a0: chaleureux, prestigieux, moderne, intime, international..."},
+        {q:"Quels \u00e9l\u00e9ments consid\u00e9rez-vous comme non n\u00e9gociables\u00a0?",hint:"ex.\u00a0: vid\u00e9o en accueil, tarifs visibles, accr\u00e9ditations Cambridge..."},
+        {q:"Quels \u00e9l\u00e9ments souhaitez-vous absolument \u00e9viter\u00a0?",hint:"ex.\u00a0: trop sombre, trop corporate, trop d\u2019animations..."},
+        {q:"Comment d\u00e9cririez-vous votre vision du site id\u00e9al\u00a0?",hint:"Imaginez le site parfait de BISP et d\u00e9crivez-le librement"},
+        {q:"Y a-t-il des sites web que vous admirez et qui pourraient servir d\u2019inspiration\u00a0?",hint:"Noms ou adresses web"},
+    ];
+    let h=`<div class="p-section-title">Votre vision du site BISP</div><p class="p-intro">En vous appuyant sur les 9 maquettes, d\u00e9crivez le site id\u00e9al selon vous.</p>`;
+    qs.forEach((q,i)=>{
+        h+=`<div class="vis-q"><label>${i+1}. ${q.q}</label>${q.hint?`<p class="hint">${q.hint}</p>`:''}<textarea rows="3" onchange="D.vis['q${i}']=this.value;save()">${D.vis['q'+i]||''}</textarea></div>`;
+    });
+    h+=`<button style="display:block;width:100%;padding:0.55rem;border-radius:20px;background:var(--navy);color:var(--white);border:none;cursor:pointer;font-family:inherit;font-size:0.78rem;font-weight:600;margin-top:1rem" onclick="exportJSON()">Exporter mes réponses</button>`;
+    h+=`<p style="text-align:center;margin-top:1rem;color:var(--gold);font-family:'EB Garamond',serif;font-style:italic;font-size:0.95rem">Merci pour votre évaluation.</p>`;
+    pc.innerHTML=h;pc.scrollTop=0;
+}
+
+function updateSiteChecks(){
+    M.forEach((m,i)=>{
+        const d=D.mockups[m.id];const filled=d?Object.keys(d.ratings).length:0;
+        const btn=document.getElementById('sb'+i);const ex=btn.querySelector('.sb-check');
+        if(filled>=19&&!ex){const sp=document.createElement('span');sp.className='sb-check';sp.textContent='✓';btn.appendChild(sp)}
+        else if(filled<19&&ex){ex.remove()}
+    });
+}
+
+function updateProgress(){
+    let total=M.length*19+CMP.length+18,filled=0;
+    Object.values(D.mockups).forEach(m=>{filled+=Object.keys(m.ratings).length});
+    filled+=Object.values(D.cmp).filter(v=>v).length;
+    filled+=Object.keys(D.hyb).filter(k=>!k.endsWith('_why')&&D.hyb[k]).length;
+    const pct=Math.min(100,Math.round(filled/total*100));
+    document.getElementById('pFill').style.width=pct+'%';
+    document.getElementById('pLabel').textContent=pct+'% complété';
+}
+
+function exportJSON(){
+    const blob=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='BISP-evaluation-'+new Date().toISOString().slice(0,10)+'.json';
+    a.click();URL.revokeObjectURL(a.href);showToast('Réponses exportées\u00a0!');
+}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+
+init();updateSiteChecks();
+</script>
+</body>
+</html>
